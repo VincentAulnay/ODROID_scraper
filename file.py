@@ -800,7 +800,7 @@ while end==0:
 						run_c=A_Colonne_mois(name_mois2,k)
 						m2_write=c_write
 						m2_newmonth=new_month
-					threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,name_mois2,)).start())
+					threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,name_mois2,)).start()
 				except:
 					pass
 				try:
