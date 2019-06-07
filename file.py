@@ -29,25 +29,7 @@ chrome_options.add_experimental_option("prefs", prefs)
 print ('▀▄▀▄▀▄ STOP AIRBNB ▄▀▄▀▄▀')
 
 
-#--------SELECTION DU FICHIER AVEC LES NOUVELLES ANNONCES--------
-path_RESULT = Tk()
-Label1 = Label(path_RESULT, text = "Sélectionner le fichier dont les nuitées doivent être calculées", fg = 'red')
-Label1.pack()
-path_RESULT.filename =  filedialog.askopenfilename(initialdir = "/",title = "Sélectionner le fichier dont les nuitées doivent être calculées",filetypes = (("Excel file","*.xlsx"),("all files","*.*")))
-print (path_RESULT.filename)
-NAMEFile=os.path.splitext(os.path.basename(path_RESULT.filename))[0]
-print(NAMEFile)
-DIR=os.path.dirname(path_RESULT.filename)
-DIR2=DIR+'/'
-print(os.path.dirname(path_RESULT.filename))
-
-
 #-----EXCEL RESULT OPEN AND READ-----
-
-book = xlrd.open_workbook(path_RESULT.filename)
-wb=copy(book)
-sheet_write = wb.get_sheet(0)
-sheet_read = book.sheet_by_index(0)
 
 wbx = load_workbook(path_RESULT.filename)
 ws = wbx.active
@@ -77,28 +59,23 @@ if V_mouth!='3/5_mois':
 #s.starttls()
 #s.login(sender, sender_password)
 
-#-----RECUP INFO XPATH FROM EXCEL------
-#book_XPATH = xlrd.open_workbook('/home/pi/Documents/PV/XPATH_.xls')
-#sheet_XPATH = book_XPATH.sheet_by_index(0)
-#X_comment=sheet_XPATH.cell(17,2).value
-#XP_update=sheet_XPATH.cell(32,2).value
-#XP_mois_1=sheet_XPATH.cell(30,2).value
-#XP_mois_2=sheet_XPATH.cell(31,2).value
-#XP_mois_3=sheet_XPATH.cell(33,3).value
-#XP_next=sheet_XPATH.cell(34,2).value
-#XP_CMP=sheet_XPATH.cell(35,2).value
+#-----RECUP INFO GMAIL------
+book_GMAIL = xlrd.open_workbook('/home/pi/Desktop/GMAIL_ACCOUNT.xls')
+sheet_GMAIL = book_GMAIL.sheet_by_index(0)
+ADRESS_GMAIL=sheet_GMAIL.cell(0,1).value
+PSW_GMAIL=sheet_GMAIL.cell(1,1).value
+RECEIVER=sheet_GMAIL.cell(2,1).value
 
 #-------DATE DU JOUR-------
 date = int(datetime.datetime.now().day)
 month = int(datetime.datetime.now().month)
 Hr=dt.datetime.now().hour
 
-#------RECUP INFO CALANDAR------
-
+#------SENT EMAIL------
 def email(DIR2,NAMEFile,now):
-	sender = 'stopairbnb.vincent@gmail.com'
-	sender_password = '@STOP94AIRBNB'
-	receivers = 'vincent.aulnay@gmail.com'
+	sender = ADRESS_GMAIL
+	sender_password = PSW_GMAIL
+	receivers = RECEIVER
 
 	s = smtplib.SMTP('smtp.gmail.com', 587)
 	s.starttls()
@@ -133,6 +110,7 @@ def email(DIR2,NAMEFile,now):
 	del text
 	del msg
 
+
 def MnumDay (Mmois):
 	global MNumday
 	if Mmois=='janvier':
@@ -164,10 +142,6 @@ def MnumDay (Mmois):
 		
 		
 def A_Colonne_mois(name_mois,c):
-#1- récupération book Result qui évolue au court du script
-#2- compter le nombre de colonne
-#3- déterminer si colonne == name_mois de airbnb
-#4- si condition alors c_write=c pour définir la colonne où écrire
 	global c_write
 	global new_month
 	book_mois = xlrd.open_workbook(path_RESULT.filename, on_demand = True)
@@ -747,7 +721,7 @@ def COMPUTE_M1(name_mois1):
 		
 #-----OPEN GOOGLE CHROME and AIRBNB PAGE---------
 
-rootdriver = webdriver.Chrome(chrome_options=chrome_options)
+rootdriver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver',chrome_options=chrome_options)
 #rootdriver = webdriver.Chrome(chrome_options=chrome_options)
 #rootdriver.set_page_load_timeout(2)
 rootdriver.set_window_size(2000, 1000)
@@ -810,10 +784,7 @@ while end==0:
 						run_c=A_Colonne_mois(name_mois1,k)
 						m1_write=c_write
 						m1_newmonth=new_month
-					#print('le mois N est '+name_mois1)
-					#threading.Thread(None,target=A_Statu_day2(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1)).start()
 					threading.Thread(target=A_Statu_day2, args=(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1,name_mois1,)).start()
-					#run_day=A_Statu_day2(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1)
 				except:
 					pass
 				try:
@@ -829,10 +800,7 @@ while end==0:
 						run_c=A_Colonne_mois(name_mois2,k)
 						m2_write=c_write
 						m2_newmonth=new_month
-					#print('le mois N+1 est '+name_mois2)
-					#threading.Thread(None,target=A_Statu_day2(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0)).start()
-					threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,name_mois2,)).start()
-					#run_day=A_Statu_day2(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0)
+					threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,name_mois2,)).start())
 				except:
 					pass
 				try:
@@ -864,9 +832,7 @@ while end==0:
 					RA4=ResAirbnb
 					if v_m=='X' and date==1:
 						RA4='/D'
-					#threading.Thread(None,target=A_Statu_day4(m3_write,j,RA4,m3_newmonth)).start()
 					threading.Thread(target=A_Statu_day4, args=(m3_write,j,RA4,m3_newmonth,name_mois3,)).start()
-					#run_resday=A_Statu_day4(m3_write,j,ResAirbnb,m3_newmonth)
 				except:
 					#print('PAS DE MOIS 3')
 					pass
@@ -901,8 +867,6 @@ while end==0:
 								m4_write=c_write
 								m4_newmonth=new_month
 							threading.Thread(target=A_Statu_day44, args=(m4_write,j,ResAirbnb,m4_newmonth,0,name_mois4,)).start()
-							#threading.Thread(None,target=A_Statu_day44(m4_write,j,ResAirbnb,m4_newmonth,0)).start()
-							#run_day=A_Statu_day5(m4_write,j,ResAirbnb,m4_newmonth,0)
 						except:
 							pass
 					#-----RECUPERATION CALANDAR MOIS 5--------
@@ -919,8 +883,6 @@ while end==0:
 								m5_write=c_write
 								m5_newmonth=new_month
 							threading.Thread(target=A_Statu_day5, args=(m5_write,j,ResAirbnb,m5_newmonth,1,name_mois5,)).start()
-							#threading.Thread(None,target=A_Statu_day5(m4_write,j,ResAirbnb,m4_newmonth,1)).start()
-							#run_day=A_Statu_day5(m5_write,j,ResAirbnb,m5_newmonth,1)
 						except:
 							pass
 					except:
@@ -952,8 +914,8 @@ while end==0:
 		COMPUTE_M1(name_mois3)
 		COMPUTE_M1(name_mois4)
 		COMPUTE_M1(name_mois5)
-		#wbx.save(DIR2+NAMEFile+str(now)+".xlsx")
-		#run=email(DIR2,NAMEFile,now)
+		wbx.save(DIR2+NAMEFile+str(now)+".xlsx")
+		run=email(DIR2,NAMEFile,now)
 		rootdriver.quit()
 		wbx.close()
 	except:
@@ -962,7 +924,7 @@ while end==0:
 		except:
 			pass
 		# EXCEPT si Chrome se ferme tout seul, ici il va le réouvrir et relancer la boucle d'extraction
-		rootdriver = webdriver.Chrome(chrome_options=chrome_options)
+		rootdriver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver',chrome_options=chrome_options)
 		#rootdriver = webdriver.Chrome(chrome_options=chrome_options)
 		rootdriver.set_window_size(1000, 1500)
 		wait = WebDriverWait(rootdriver, 3)
