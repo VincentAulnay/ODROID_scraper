@@ -702,6 +702,7 @@ while end==0:
 					if e==10:
 						hok=1
 				hok=0
+				time.sleep(2)
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
 				if C_mois!=0:
