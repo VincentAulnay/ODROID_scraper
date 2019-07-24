@@ -20,6 +20,8 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from openpyxl import load_workbook
+import threading
+import sys
 
 
 
@@ -667,17 +669,22 @@ C_mois=0
 C_mois5=0
 drive=0
 date = int(datetime.datetime.now().day)
-
+h=ws.cell(row=j, column=2).value
+rootdriver.get(h)
+def f1(a):
+	print('F1')
+	rootdriver.get(a)
 while end==0:
 	try:
 		while j<=nrow:
-			h=ws.cell(row=j, column=2).value
+			if j+1<=nrow:
+				h=ws.cell(row=j+1, column=2).value
 			print('------'+str(j-1)+'------'+str(h))
 			if h==None:
 				j=j+1
 				print('h=None')
 			elif 'airbnb' in h:
-				rootdriver.get(h)
+				#rootdriver.get(h)
 				ResAirbnb=''
 				V_up=ws.cell(row=j, column=k).value
 				v_m=ws.cell(row=j, column=c_mouth).value
@@ -685,6 +692,7 @@ while end==0:
 				time.sleep(4)
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
+				threading.Thread(target=f1, args=(h,)).start()
 				try:
 					script=soup.find('script', attrs={"data-state":u"true"}).text
 					p1=script.split("calendar_last")
