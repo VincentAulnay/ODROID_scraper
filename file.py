@@ -669,13 +669,11 @@ C_mois=0
 C_mois5=0
 drive=0
 date = int(datetime.datetime.now().day)
-h=ws.cell(row=j, column=2).value
-
 while end==0:
 	try:
 		while j<=nrow:
 			
-			h=ws.cell(row=j+1, column=2).value
+			h=ws.cell(row=j, column=2).value
 			print('------'+str(j-1)+'------'+str(h))
 			if h==None:
 				j=j+1
