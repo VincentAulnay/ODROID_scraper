@@ -672,6 +672,7 @@ date = int(datetime.datetime.now().day)
 def f1(a):
 	print('F1')
 	rootdriver.get(a)
+	print('OK')
 h=ws.cell(row=j, column=2).value
 rootdriver.get(h)
 while end==0:
@@ -691,6 +692,7 @@ while end==0:
 				v_m=ws.cell(row=j, column=c_mouth).value
 
 				time.sleep(6)
+				print('html')
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
 				if C_mois!=0:
