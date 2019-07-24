@@ -767,7 +767,7 @@ while end==0:
 					if v_m=='X' and date==1:
 						RA4='/D'
 					threading.Thread(target=A_Statu_day4, args=(m3_write,j,RA4,m3_newmonth,)).start()
-					run_resday=A_Statu_day4(m3_write,j,RA4,m3_newmonth)
+					#run_resday=A_Statu_day4(m3_write,j,RA4,m3_newmonth)
 				except:
 					#print('PAS DE MOIS 3')
 					pass
