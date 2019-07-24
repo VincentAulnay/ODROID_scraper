@@ -677,6 +677,7 @@ def f1(a):
 	hok=1
 h=ws.cell(row=j, column=2).value
 rootdriver.get(h)
+time.sleep(2)
 hok=1
 while end==0:
 	try:
