@@ -691,9 +691,7 @@ while end==0:
 
 				time.sleep(6)
 				html = rootdriver.page_source
-				threading.Thread(target=f1, args=(h,)).start()
 				soup = BeautifulSoup(html, 'html.parser')
-				
 				try:
 					script=soup.find('script', attrs={"data-state":u"true"}).text
 					p1=script.split("calendar_last")
@@ -708,6 +706,7 @@ while end==0:
 				except:
 					pass
 				time.sleep(1)
+				threading.Thread(target=f1, args=(h,)).start()
 				try:
 				#-----RECUPERATION CALANDAR MOIS 1--------
 					if C_mois==0:
