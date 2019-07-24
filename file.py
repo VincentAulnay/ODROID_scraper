@@ -702,7 +702,12 @@ while end==0:
 					if e==10:
 						hok=1
 				hok=0
-				time.sleep(2)
+				try:
+					tes1 = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class='_1lds9wb'][1]//div[@class='_gucugi']/strong"))).text
+					tes2 = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class='_1lds9wb'][2]//div[@class='_gucugi']/strong"))).text
+				except:
+					print('page dont load')
+				time.sleep(1)
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
 				if C_mois!=0:
