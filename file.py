@@ -669,17 +669,22 @@ C_mois=0
 C_mois5=0
 drive=0
 date = int(datetime.datetime.now().day)
+def f1(a):
+	print('F1')
+	rootdriver.get(a)
+rootdriver.get(h)
 while end==0:
 	try:
 		while j<=nrow:
-			
-			h=ws.cell(row=j, column=2).value
 			print('------'+str(j-1)+'------'+str(h))
+			if j+1<=nrow:
+				h=ws.cell(row=j+1, column=2).value
+			
 			if h==None:
 				j=j+1
 				print('h=None')
 			elif 'airbnb' in h:
-				rootdriver.get(h)
+				#rootdriver.get(h)
 				ResAirbnb=''
 				V_up=ws.cell(row=j, column=k).value
 				v_m=ws.cell(row=j, column=c_mouth).value
@@ -687,6 +692,8 @@ while end==0:
 				time.sleep(6)
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
+				if C_mois!=0:
+					threading.Thread(target=f1, args=(h,)).start()
 				try:
 					script=soup.find('script', attrs={"data-state":u"true"}).text
 					p1=script.split("calendar_last")
@@ -715,8 +722,8 @@ while end==0:
 						m1_write=c_write
 						m1_newmonth=new_month
 					print('le mois N est '+name_mois1)
-					threading.Thread(target=A_Statu_day2, args=(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1,)).start()
-					#run_day=A_Statu_day2(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1)
+					#threading.Thread(target=A_Statu_day2, args=(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1,)).start()
+					run_day=A_Statu_day2(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1)
 				except:
 					pass
 				try:
@@ -733,8 +740,8 @@ while end==0:
 						m2_write=c_write
 						m2_newmonth=new_month
 					print('le mois N+1 est '+name_mois2)
-					threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,)).start()
-					#run_day=A_Statu_day2(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0)
+					#threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,)).start()
+					run_day=A_Statu_day2(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0)
 				except:
 					pass
 				try:
@@ -766,8 +773,8 @@ while end==0:
 					RA4=ResAirbnb
 					if v_m=='X' and date==1:
 						RA4='/D'
-					threading.Thread(target=A_Statu_day4, args=(m3_write,j,RA4,m3_newmonth,)).start()
-					#run_resday=A_Statu_day4(m3_write,j,RA4,m3_newmonth)
+					#threading.Thread(target=A_Statu_day4, args=(m3_write,j,RA4,m3_newmonth,)).start()
+					run_resday=A_Statu_day4(m3_write,j,RA4,m3_newmonth)
 				except:
 					#print('PAS DE MOIS 3')
 					pass
@@ -802,8 +809,8 @@ while end==0:
 								m4_newmonth=new_month
 							print('   ---')
 							print('le mois N est '+name_mois4)
-							threading.Thread(target=A_Statu_day5, args=(m4_write,j,ResAirbnb,m4_newmonth,0,)).start()
-							#run_day=A_Statu_day5(m4_write,j,ResAirbnb,m4_newmonth,0)
+							#threading.Thread(target=A_Statu_day5, args=(m4_write,j,ResAirbnb,m4_newmonth,0,)).start()
+							run_day=A_Statu_day5(m4_write,j,ResAirbnb,m4_newmonth,0)
 						except:
 							pass
 					#-----RECUPERATION CALANDAR MOIS 5--------
@@ -821,8 +828,8 @@ while end==0:
 								m5_newmonth=new_month
 							print('   ---')
 							print('le mois N+1 est '+name_mois5)
-							threading.Thread(target=A_Statu_day5, args=(m5_write,j,ResAirbnb,m5_newmonth,1,)).start()
-							#run_day=A_Statu_day5(m5_write,j,ResAirbnb,m5_newmonth,1)
+							#threading.Thread(target=A_Statu_day5, args=(m5_write,j,ResAirbnb,m5_newmonth,1,)).start()
+							run_day=A_Statu_day5(m5_write,j,ResAirbnb,m5_newmonth,1)
 						except:
 							pass
 					except:
@@ -831,6 +838,8 @@ while end==0:
 					C_mois5=1
 				if (j/10).is_integer():
 					wbx.save(path_RESULT.filename)
+				if C_mois==0:
+					threading.Thread(target=f1, args=(h,)).start()
 				C_mois=1
 				j=j+1
 			elif 'abritel' in h:
