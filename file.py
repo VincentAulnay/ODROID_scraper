@@ -822,7 +822,8 @@ while end==0:
 						print('----click KO')
 						pass
 					C_mois5=1
-				wbx.save(path_RESULT.filename)
+				if (j/10).is_integer():
+					wbx.save(path_RESULT.filename)
 				C_mois=1
 				j=j+1
 			elif 'abritel' in h:
@@ -831,6 +832,7 @@ while end==0:
 				j=j+1
 		
 		end=1
+		wbx.save(path_RESULT.filename)
 		now = str(datetime.datetime.now())[:19]
 		now = now.replace(":","_")
 		Tr=date
