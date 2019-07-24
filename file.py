@@ -693,12 +693,10 @@ while end==0:
 				ResAirbnb=''
 				V_up=ws.cell(row=j, column=k).value
 				v_m=ws.cell(row=j, column=c_mouth).value
-
-				time.sleep(8)
 				print('html')
 				e=0
 				while hok!=1:
-					time.sleep(2)
+					time.sleep(1)
 					e=e+1
 					if e==10:
 						hok=1
