@@ -689,10 +689,11 @@ while end==0:
 				V_up=ws.cell(row=j, column=k).value
 				v_m=ws.cell(row=j, column=c_mouth).value
 
-				time.sleep(4)
+				time.sleep(6)
 				html = rootdriver.page_source
-				soup = BeautifulSoup(html, 'html.parser')
 				threading.Thread(target=f1, args=(h,)).start()
+				soup = BeautifulSoup(html, 'html.parser')
+				
 				try:
 					script=soup.find('script', attrs={"data-state":u"true"}).text
 					p1=script.split("calendar_last")
