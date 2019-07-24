@@ -672,6 +672,7 @@ date = int(datetime.datetime.now().day)
 def f1(a):
 	print('F1')
 	rootdriver.get(a)
+h=ws.cell(row=j, column=2).value
 rootdriver.get(h)
 while end==0:
 	try:
