@@ -20,16 +20,24 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from openpyxl import load_workbook
-import threading
+
+
 
 chrome_options = webdriver.ChromeOptions()
 prefs = {"profile.managed_default_content_settings.images": 2}
 chrome_options.add_experimental_option("prefs", prefs)
+#chrome_options.add_argument("-headless")
+#chrome_options.add_argument("-disable-gpu")
 
-print ('▀▄▀▄▀▄ STOP AIRBNB ▄▀▄▀▄▀')
+print ('▀▄▀▄▀▄ STOPBNB ▄▀▄▀▄▀')
 
 
 #-----EXCEL RESULT OPEN AND READ-----
+
+#book = xlrd.open_workbook(path_RESULT.filename)
+#wb=copy(book)
+#sheet_write = wb.get_sheet(0)
+#sheet_read = book.sheet_by_index(0)
 
 wbx = load_workbook(path_RESULT.filename)
 ws = wbx.active
@@ -38,13 +46,13 @@ ws = wbx.active
 up=0
 k=1
 while up==0:
+	#V_up=sheet_read.cell(0,i).value
 	V_up=ws.cell(row=1, column=k).value
 	if V_up=='UPDATE_CALENDAR':
 		up=1
 	else:
 		k=k+1
-print(k)
-
+		
 c_mouth=k+1
 
 V_mouth=ws.cell(row=1, column=c_mouth).value
@@ -52,14 +60,7 @@ if V_mouth!='3/5_mois':
 	ws.insert_cols(c_mouth)
 	ws.cell(row=1, column=c_mouth).value = '3/5_mois'
 
-
-#-------EMAIL VALUE-----------
-
-#s = smtplib.SMTP('smtp.gmail.com', 587)
-#s.starttls()
-#s.login(sender, sender_password)
-
-#-----RECUP INFO GMAIL------
+#-----RECUP INFO XPATH FROM EXCEL------
 book_GMAIL = xlrd.open_workbook('/home/odroid/Desktop/GMAIL_ACCOUNT.xls')
 sheet_GMAIL = book_GMAIL.sheet_by_index(0)
 ADRESS_GMAIL=sheet_GMAIL.cell(0,1).value
@@ -71,7 +72,8 @@ date = int(datetime.datetime.now().day)
 month = int(datetime.datetime.now().month)
 Hr=dt.datetime.now().hour
 
-#------SENT EMAIL------
+#------RECUP INFO CALANDAR------
+
 def email(DIR2,NAMEFile,now):
 	sender = ADRESS_GMAIL
 	sender_password = PSW_GMAIL
@@ -110,7 +112,6 @@ def email(DIR2,NAMEFile,now):
 	del text
 	del msg
 
-
 def MnumDay (Mmois):
 	global MNumday
 	if Mmois=='janvier':
@@ -142,6 +143,10 @@ def MnumDay (Mmois):
 		
 		
 def A_Colonne_mois(name_mois,c):
+#1- récupération book Result qui évolue au court du script
+#2- compter le nombre de colonne
+#3- déterminer si colonne == name_mois de airbnb
+#4- si condition alors c_write=c pour définir la colonne où écrire
 	global c_write
 	global new_month
 	book_mois = xlrd.open_workbook(path_RESULT.filename, on_demand = True)
@@ -183,7 +188,7 @@ def A_Colonne_mois(name_mois,c):
 			c=c+1
 
 
-def A_Statu_day2(date,c_write,page,j,g,ResAirbnb,new_mo,MNday,ONCOM,name_m):	
+def A_Statu_day2(date,c_write,page,j,g,ResAirbnb,new_mo,MNday,ONCOM):	
 	int_timeday=int(date)
 	month=soup.findAll('div', attrs={"class":u"_1lds9wb"})[g]
 	i=0
@@ -250,18 +255,17 @@ def A_Statu_day2(date,c_write,page,j,g,ResAirbnb,new_mo,MNday,ONCOM,name_m):
 					t=t.replace("[","")
 					t=t.replace("]","")
 					r=str(ca)+';    '+t
-					lenli=len(lie)+len(LB)
-					ws.cell(row=j, column=c_write+3).value=lenli
+					#lenli=len(lie)+len(LB)
+					#ws.cell(row=j, column=c_write+3).value=lenli
 			else:
 				t=ResAirbnb+toto+':'+str(li)
 				t=t.replace("[","")
 				t=t.replace("]","")
 				r=t
 				#print(r)
-				lenli=len(li)
-				ws.cell(row=j, column=c_write+3).value=lenli
+				#lenli=len(li)
+				#ws.cell(row=j, column=c_write+3).value=lenli
 			if r!='set()':
-				print('le mois N+2 est '+name_m)
 				print (r)
 				ws.cell(row=j, column=c_write).value=r
 	except:
@@ -278,7 +282,7 @@ def A_Statu_day2(date,c_write,page,j,g,ResAirbnb,new_mo,MNday,ONCOM,name_m):
 			pass
 
 	
-def A_Statu_day4(c_write,j,ResAirbnb,new_mo,name_m):	
+def A_Statu_day4(c_write,j,ResAirbnb,new_mo):	
 	month5=soup.find('div', attrs={"class":u"_kuxo8ai"})
 	i=0
 	li=[]
@@ -329,23 +333,22 @@ def A_Statu_day4(c_write,j,ResAirbnb,new_mo,name_m):
 					t=t.replace("[","")
 					t=t.replace("]","")
 					r=str(ca)+';    '+t
-					lenli=len(lie)+len(LB)
-					ws.cell(row=j, column=c_write+3).value=lenli
+					#lenli=len(lie)+len(LB)
+					#ws.cell(row=j, column=c_write+3).value=lenli
 			else:
 				t=ResAirbnb+toto+':'+str(li)
 				t=t.replace("[","")
 				t=t.replace("]","")
 				r=t
-				lenli=len(li)
-				ws.cell(row=j, column=c_write+3).value=lenli
+				#lenli=len(li)
+				#ws.cell(row=j, column=c_write+3).value=lenli
 			if r!='set()':
-				print('le mois N+2 est '+name_m)
 				print (r)
 				ws.cell(row=j, column=c_write).value=r
 	except:
 		pass
 
-def A_Statu_day44(c_write,j,ResAirbnb,new_mo,g,name_m):
+def A_Statu_day5(c_write,j,ResAirbnb,new_mo,g):	
 	month5=soup.findAll('div', attrs={"class":u"_1lds9wb"})[g]
 	i=0
 	li=[]
@@ -396,8 +399,8 @@ def A_Statu_day44(c_write,j,ResAirbnb,new_mo,g,name_m):
 					t=t.replace("[","")
 					t=t.replace("]","")
 					r=str(ca)+';    '+t
-					lenli=len(lie)+len(LB)
-					ws.cell(row=j, column=c_write+3).value=lenli
+					#lenli=len(lie)+len(LB)
+					#ws.cell(row=j, column=c_write+3).value=lenli
 			else:
 				t=ResAirbnb+toto+':'+str(li)
 				t=t.replace("[","")
@@ -406,81 +409,8 @@ def A_Statu_day44(c_write,j,ResAirbnb,new_mo,g,name_m):
 				#lenli=len(li)
 				#ws.cell(row=j, column=c_write+3).value=lenli
 			if r!='set()':
-				print('   ---')
-				print('le mois N+1 est '+name_m)
 				print (r)
 				ws.cell(row=j, column=c_write).value=r
-	except:
-		pass		
-
-def A_Statu_day5(c_write,j,ResAirbnb,new_mo,g,name_m):	
-	month5=soup.findAll('div', attrs={"class":u"_1lds9wb"})[g]
-	i=0
-	li5=[]
-	if new_mo==1:
-		ResAirbnb='/D'
-	while i<=31:
-		try:
-			the_tr5= month5.findAll('td', attrs={"class": "_z39f86g"})[i]
-			div5=the_tr5.find('div', attrs={"class": "_1fhupg9r"}).text
-			intdiv5=int(div5)
-			li5.append(intdiv5)
-			i=i+1
-		except:
-			break
-	#print (li5)
-	try:
-		if len(li5)>0:
-			ca5=ws.cell(row=j, column=c_write).value
-			#print (ca5)
-			#-------DATE DU JOUR-------
-			date = int(datetime.datetime.now().day)
-			month = int(datetime.datetime.now().month)
-			toto=str(date)+'-'+str(month)
-			#print (toto)
-			if ca5!=None:
-				li_ca5=ca5.split(";")
-			else:
-				li_ca5=[]
-
-			lie5=[]
-			if li_ca5!=[]:
-				lenL5=len(li_ca5)
-				h5=0
-				LB5=[]
-				while h5!=lenL5:
-					LA5=li_ca5[h5]
-					LA5=LA5.split(':')
-					del LA5[0]
-					LA5=LA5[0].split(',')
-					lenLA5=len(LA5)
-					g5=0
-					while g5!=lenLA5:
-						intV5=int(LA5[g5])
-						LB5.append(intV5)
-						g5=g5+1
-					h5=h5+1
-			
-				lie5=[elem for elem in li5 if elem not in LB5 ]
-				if len(lie5)!=0:
-					t5=ResAirbnb+toto+':'+str(lie5)
-					t5=t5.replace("[","")
-					t5=t5.replace("]","")
-					r5=str(ca5)+';    '+t5
-					lenli5=len(lie5)+len(LB5)
-					ws.cell(row=j, column=c_write+3).value=lenli5
-			else:
-				t5=ResAirbnb+toto+':'+str(li5)
-				t5=t5.replace("[","")
-				t5=t5.replace("]","")
-				r5=t5
-				#lenli5=len(li5)
-				#ws.cell(row=j, column=c_write+3).value=lenli5
-			if r5!='set()':
-				print('   ---')
-				print('le mois N+1 est '+name_m)
-				print (r5)
-				ws.cell(row=j, column=c_write).value=r5
 	except:
 		pass
 	
@@ -743,33 +673,31 @@ while end==0:
 		while j<=nrow:
 			h=ws.cell(row=j, column=2).value
 			print('------'+str(j-1)+'------'+str(h))
-			if 'airbnb' in h:
+			if h==None:
+				j=j+1
+				print('h=None')
+			elif 'airbnb' in h:
 				rootdriver.get(h)
 				ResAirbnb=''
-				V_up="Mis à jour aujourd'hui"
+				V_up=ws.cell(row=j, column=k).value
 				v_m=ws.cell(row=j, column=c_mouth).value
-				while drive==0:
-					try:
-						V_up = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class='_q401y8m']//span"))).text
-						drive=1
-					except:
-						rootdriver.quit()
-						rootdriver = webdriver.Chrome(chrome_options=chrome_options)
-						rootdriver.set_window_size(2000, 1000)
-						wait = WebDriverWait(rootdriver, 5)
-						rootdriver.get(h)
-						pass
-				try:
-					V_up = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class='_q401y8m']//span"))).text
-					ws.cell(row=j, column=k).value=V_up
-					print (V_up)
-				except:
-					pass
-				if V_up!="Mis à jour aujourd'hui":
-					ResAirbnb='/A'
-				time.sleep(1)
+
+				time.sleep(4)
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
+				try:
+					script=soup.find('script', attrs={"data-state":u"true"}).text
+					p1=script.split("calendar_last")
+					p2=p1[1].split("guest_controls")
+					p3=p2[0].replace('_updated_at":"', '')
+					p4=p3.replace('","', '')
+					print (p4)
+					if p4==V_up:
+						ResAirbnb='/A'
+					else:
+						ws.cell(row=j, column=k).value=p4
+				except:
+					pass
 				time.sleep(1)
 				try:
 				#-----RECUPERATION CALANDAR MOIS 1--------
@@ -784,7 +712,8 @@ while end==0:
 						run_c=A_Colonne_mois(name_mois1,k)
 						m1_write=c_write
 						m1_newmonth=new_month
-					threading.Thread(target=A_Statu_day2, args=(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1,name_mois1,)).start()
+					print('le mois N est '+name_mois1)
+					run_day=A_Statu_day2(date,m1_write,1,j,0,ResAirbnb,m1_newmonth,500,1)
 				except:
 					pass
 				try:
@@ -800,7 +729,8 @@ while end==0:
 						run_c=A_Colonne_mois(name_mois2,k)
 						m2_write=c_write
 						m2_newmonth=new_month
-					threading.Thread(target=A_Statu_day2, args=(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0,name_mois2,)).start()
+					print('le mois N+1 est '+name_mois2)
+					run_day=A_Statu_day2(1,m2_write,2,j,1,ResAirbnb,m2_newmonth,MNday1,0)
 				except:
 					pass
 				try:
@@ -828,28 +758,27 @@ while end==0:
 						run_c=A_Colonne_mois(name_mois3,k)
 						m3_write=c_write
 						m3_newmonth=new_month
-					#print('le mois N+2 est '+name_mois3)
+					print('le mois N+2 est '+name_mois3)
 					RA4=ResAirbnb
 					if v_m=='X' and date==1:
 						RA4='/D'
-					threading.Thread(target=A_Statu_day4, args=(m3_write,j,RA4,m3_newmonth,name_mois3,)).start()
+					run_resday=A_Statu_day4(m3_write,j,RA4,m3_newmonth)
 				except:
 					#print('PAS DE MOIS 3')
 					pass
 			#-----MOIS 4-5 -----
-				if v_m!='X':
+				if v_m!='x':
 					try:
-						rootdriver.execute_script("window.scrollBy(0,1500);")
 						ele=rootdriver.find_element_by_xpath("//div[@class='_vy3ibx']/h2/span")
 						rootdriver.execute_script("arguments[0].scrollIntoView(true);", ele)
 						rootdriver.execute_script("window.scrollBy(0,-500);")
 						next_calendar = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@aria-label='Avancez pour passer au mois suivant.']")))
 						next_calendar.click()
-						time.sleep(1)
+						time.sleep(2)
 						next_calendar.click()
-						time.sleep(1)
+						time.sleep(2)
 						next_calendar.click()
-						time.sleep(1)
+						time.sleep(2)
 						html = rootdriver.page_source
 						soup = BeautifulSoup(html, 'html.parser')
 						time.sleep(1)
@@ -866,7 +795,9 @@ while end==0:
 								run_c=A_Colonne_mois(name_mois4,k)
 								m4_write=c_write
 								m4_newmonth=new_month
-							threading.Thread(target=A_Statu_day44, args=(m4_write,j,ResAirbnb,m4_newmonth,0,name_mois4,)).start()
+							print('   ---')
+							print('le mois N est '+name_mois4)
+							run_day=A_Statu_day5(m4_write,j,ResAirbnb,m4_newmonth,0)
 						except:
 							pass
 					#-----RECUPERATION CALANDAR MOIS 5--------
@@ -882,18 +813,21 @@ while end==0:
 								run_c=A_Colonne_mois(name_mois5,k)
 								m5_write=c_write
 								m5_newmonth=new_month
-							threading.Thread(target=A_Statu_day5, args=(m5_write,j,ResAirbnb,m5_newmonth,1,name_mois5,)).start()
+							print('   ---')
+							print('le mois N+1 est '+name_mois5)
+							run_day=A_Statu_day5(m5_write,j,ResAirbnb,m5_newmonth,1)
 						except:
 							pass
 					except:
 						print('----click KO')
 						pass
 					C_mois5=1
-					time.sleep(1)
 				wbx.save(path_RESULT.filename)
 				C_mois=1
 				j=j+1
 			elif 'abritel' in h:
+				j=j+1
+			else:
 				j=j+1
 		
 		end=1
@@ -911,9 +845,9 @@ while end==0:
 		ws = wbx.active
 		COMPUTE_M1(name_mois1)
 		COMPUTE_M1(name_mois2)
-		COMPUTE_M1(name_mois3)
-		COMPUTE_M1(name_mois4)
-		COMPUTE_M1(name_mois5)
+		#COMPUTE_M1(name_mois3)
+		#COMPUTE_M1(name_mois4)
+		#COMPUTE_M1(name_mois5)
 		wbx.save(DIR2+NAMEFile+str(now)+".xlsx")
 		run=email(DIR2,NAMEFile,now)
 		rootdriver.quit()
