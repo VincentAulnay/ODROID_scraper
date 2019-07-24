@@ -670,11 +670,14 @@ C_mois5=0
 drive=0
 date = int(datetime.datetime.now().day)
 def f1(a):
+	global hok
 	print('F1')
 	rootdriver.get(a)
 	print('OK')
+	hok=1
 h=ws.cell(row=j, column=2).value
 rootdriver.get(h)
+hok=1
 while end==0:
 	try:
 		while j<=nrow:
@@ -693,6 +696,13 @@ while end==0:
 
 				time.sleep(8)
 				print('html')
+				e=0
+				while hok!=1:
+					time.sleep(2)
+					e=e+1
+					if e==10:
+						hok=1
+				hok=0
 				html = rootdriver.page_source
 				soup = BeautifulSoup(html, 'html.parser')
 				if C_mois!=0:
